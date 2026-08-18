@@ -1,10 +1,18 @@
-# Fig pre block. Keep at the top of this file.
-[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && . "$HOME/.fig/shell/zshrc.pre.zsh"
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+#if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+#fi
+
 # shortcut to this dotfiles path is $ZSH
 export ZSH=$HOME/.dotfiles
 
+# Keep shell search paths unique, including when reloading this file.
+typeset -U path fpath
+
 # your project folder that we can `c [tab]` to
-export PROJECTS=~/Code
+export PROJECTS=~/Projects
 
 # Stash your environment variables in ~/.localrc. This means they'll stay out
 # of your main dotfiles repository (which may be public, like this one), but
@@ -15,6 +23,7 @@ then
 fi
 
 # all of our zsh files
+# Keep prompt loading explicit so only Powerlevel10k controls the prompt.
 typeset -U config_files
 config_files=($ZSH/**/*.zsh)
 
@@ -24,11 +33,15 @@ do
   source $file
 done
 
-# load everything but the path and completion files
-for file in ${${config_files:#*/path.zsh}:#*/completion.zsh}
+# load everything but path/completion/custom prompt/p10k config
+for file in ${${${config_files:#*/path.zsh}:#*/completion.zsh}:#*/prompt.zsh}
 do
+  [[ $file == */powerlevel10k/p10k.zsh ]] && continue
   source $file
 done
+
+# prompt: use Powerlevel10k only
+source $ZSH/powerlevel10k/p10k.zsh
 
 # initialize autocomplete here, otherwise functions won't be loaded
 autoload -U compinit
@@ -51,5 +64,10 @@ zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search # Up
 bindkey "^[[B" down-line-or-beginning-search # Down
 
-# Fig post block. Keep at the bottom of this file.
-[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && . "$HOME/.fig/shell/zshrc.post.zsh"
+[[ "$TERM_PROGRAM" == "kiro" ]] && (( $+commands[kiro] )) && . "$(kiro --locate-shell-integration-path zsh)"
+
+eval "$(mise activate zsh)"
+
+# Remove duplicate entries inherited or added by shell integrations.
+path=($path)
+fpath=($fpath)

@@ -1,1 +1,2 @@
-export EDITOR='code'
+export EDITOR='zed-wait'
+export VISUAL="$EDITOR"

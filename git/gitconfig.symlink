@@ -16,7 +16,7 @@
         ui = true
 [core]
         excludesfile = ~/.gitignore
-        editor = vim
+        editor = ~/.dotfiles/bin/zed-wait
 [apply]
         whitespace = nowarn
 [mergetool]
@@ -38,3 +38,9 @@
 
 [init]
 	defaultBranch = main
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential

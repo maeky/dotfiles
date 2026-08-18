@@ -1,0 +1,10 @@
+#!/bin/sh
+
+ZED_CLI="/Applications/Zed.app/Contents/MacOS/cli"
+
+if [ ! -x "$ZED_CLI" ]; then
+  echo "Zed CLI not found at $ZED_CLI" >&2
+  exit 1
+fi
+
+exec "$ZED_CLI" "$@"

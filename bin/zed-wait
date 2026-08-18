@@ -1,0 +1,4 @@
+#!/bin/sh
+
+ZED="$(dirname "$0")/zed"
+exec "$ZED" --wait "$@"
