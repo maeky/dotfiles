@@ -17,3 +17,6 @@ brew "docker-buildx"
 tap "ddev/ddev"
 brew "ddev/ddev/ddev"
 brew "mkcert"
+
+# Apps
+cask "zed"

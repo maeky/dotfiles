@@ -22,6 +22,7 @@ sources=(
   mise/config.toml
   ghostty/config
   herdr/config.toml
+  zed/settings.json
 )
 
 targets=(
@@ -31,6 +32,7 @@ targets=(
   "$HOME/.config/mise/config.toml"
   "$HOME/.config/ghostty/config"
   "$HOME/.config/herdr/config.toml"
+  "$HOME/.config/zed/settings.json"
 )
 
 conflicts=0
