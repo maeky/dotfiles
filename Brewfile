@@ -20,3 +20,14 @@ brew "mkcert"
 
 # Apps
 cask "zed"
+
+# Kommunikation
+cask "slack"
+cask "google-chrome"
+
+# Produktivitet
+cask "linear"
+cask "fantastical"
+cask "jordanbaird-ice"
+cask "spotify"
+
