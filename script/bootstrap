@@ -21,6 +21,7 @@ sources=(
   git/gitignore.symlink
   mise/config.toml
   ghostty/config
+  herdr/config.toml
 )
 
 targets=(
@@ -29,6 +30,7 @@ targets=(
   "$HOME/.gitignore"
   "$HOME/.config/mise/config.toml"
   "$HOME/.config/ghostty/config"
+  "$HOME/.config/herdr/config.toml"
 )
 
 conflicts=0

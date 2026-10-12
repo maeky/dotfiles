@@ -8,6 +8,7 @@ brew "powerlevel10k"
 
 # Terminal
 cask "ghostty"
+brew "herdr"
 
 # Docker / WordPress development
 brew "colima"
