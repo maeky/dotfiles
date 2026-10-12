@@ -7,7 +7,7 @@
     ui = auto
 [core]
     excludesfile = ~/.gitignore
-    editor = ~/.dotfiles/bin/zed-wait
+    editor = ~/.dotfiles/bin/editor
 [push]
     default = simple
 [credential]

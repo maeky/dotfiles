@@ -40,7 +40,7 @@ Review `Brewfile`, then explicitly run:
 /opt/homebrew/bin/brew bundle --file="$HOME/.dotfiles/Brewfile"
 ```
 
-The initial list is limited to gh, mise and Powerlevel10k. Add apps individually
+The initial list includes Fresh, fzf, gh, mise and Powerlevel10k. Add apps individually
 after deciding what is needed. No third-party taps are configured. `script/install`
 only prints instructions. `bin/dot` only invokes the linker (preview by default).
 
@@ -50,7 +50,8 @@ Zsh sources an explicit list. It does not load `.localrc`, Kiro, grc, pyenv or
 rbenv integration. PATH starts with native Homebrew and macOS system paths;
 only the reviewed `bin/` directory is appended. Custom tool paths must be added
 deliberately. Powerlevel10k and mise are initialized only if available at their
-known Homebrew locations. Keep completion security checks enabled.
+known Homebrew locations. Keep completion security checks enabled. fzf provides Ctrl+R history search,
+Ctrl+T file selection, Alt+C directory selection and fuzzy completion with ** + Tab.
 
 Mise is the default runtime manager. Its global config enables paranoid mode.
 `mise/config.toml` pins Node.js 24.21.0 and Python 3.14.8. Ruby is not configured. Review
@@ -80,8 +81,10 @@ can contain sensitive arguments; ignoring leading spaces is not a guarantee.
 
 ## Editors and legacy helpers
 
-The active `bin/` contains only `dot`, `e`, `zed` and `zed-wait`. Editor commands
-expect a trusted Zed installation in `/Applications/Zed.app`.
+The active `bin/` contains `dot`, `e`, `editor` and optional Zed wrappers.
+`EDITOR`, `VISUAL`, `e` and Git use `bin/editor`: Fresh when available on PATH,
+otherwise macOS nano. No vi or Vim is selected. Fresh is included in the Brewfile as `fresh-editor`. `e file.txt` opens a file; `e` opens the editor
+without a filename. Zed wrappers remain available only for explicit use.
 
 Old scripts are in `legacy/` for reference and are not sourced, linked or placed
 on PATH. They include external upload utilities, potentially unsafe shell

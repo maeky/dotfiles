@@ -12,6 +12,11 @@ autoload -Uz compinit
 compinit
 source "$ZSH/zsh/completion.zsh"
 
+# fzf key bindings and fuzzy completion, from the known Homebrew binary.
+if [[ -x /opt/homebrew/bin/fzf ]]; then
+  source <(/opt/homebrew/bin/fzf --zsh)
+fi
+
 if [[ -r /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme ]]; then
   source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
   source "$ZSH/powerlevel10k/p10k.zsh"

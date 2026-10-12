@@ -1,2 +1,2 @@
-export EDITOR='zed-wait'
+export EDITOR="$ZSH/bin/editor"
 export VISUAL="$EDITOR"
