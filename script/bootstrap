@@ -14,8 +14,23 @@ fi
 if [ -z "${HOME:-}" ] || [ "$HOME" = / ]; then
   echo "HOME must point to a user home directory." >&2; exit 2
 fi
-sources=(zsh/zshrc.symlink git/gitconfig.symlink git/gitignore.symlink mise/config.toml)
-targets=("$HOME/.zshrc" "$HOME/.gitconfig" "$HOME/.gitignore" "$HOME/.config/mise/config.toml")
+
+sources=(
+  zsh/zshrc.symlink
+  git/gitconfig.symlink
+  git/gitignore.symlink
+  mise/config.toml
+  ghostty/config
+)
+
+targets=(
+  "$HOME/.zshrc"
+  "$HOME/.gitconfig"
+  "$HOME/.gitignore"
+  "$HOME/.config/mise/config.toml"
+  "$HOME/.config/ghostty/config"
+)
+
 conflicts=0
 for i in "${!sources[@]}"; do
   src="$ROOT/${sources[$i]}"
