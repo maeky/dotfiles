@@ -1,0 +1,14 @@
+# Template only: bootstrap does not install this file.
+# Export the PUBLIC part of a new GitHub SSH key from 1Password to ~/.ssh/github.pub.
+# Keep the private key in 1Password. Review existing config and Includes first.
+Host github.com
+    HostName github.com
+    User git
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    IdentityFile ~/.ssh/github.pub
+    IdentitiesOnly yes
+    ForwardAgent no
+    StrictHostKeyChecking ask
+
+Host *
+    ForwardAgent no

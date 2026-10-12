@@ -1,73 +1,26 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-#if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-#fi
-
-# shortcut to this dotfiles path is $ZSH
-export ZSH=$HOME/.dotfiles
-
-# Keep shell search paths unique, including when reloading this file.
+# Explicit startup list; no recursive sourcing or private-file auto-loading.
+export ZSH="$HOME/.dotfiles"
+export PROJECTS="$HOME/Projects"
 typeset -U path fpath
+source "$ZSH/homebrew/path.zsh"
+source "$ZSH/system/_path.zsh"
+source "$ZSH/system/env.zsh"
+source "$ZSH/zsh/config.zsh"
+source "$ZSH/zsh/aliases.zsh"
 
-# your project folder that we can `c [tab]` to
-export PROJECTS=~/Projects
+autoload -Uz compinit
+compinit
+source "$ZSH/zsh/completion.zsh"
 
-# Stash your environment variables in ~/.localrc. This means they'll stay out
-# of your main dotfiles repository (which may be public, like this one), but
-# you'll have access to them in your scripts.
-if [[ -a ~/.localrc ]]
-then
-  source ~/.localrc
+if [[ -r /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme ]]; then
+  source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
+  source "$ZSH/powerlevel10k/p10k.zsh"
 fi
 
-# all of our zsh files
-# Keep prompt loading explicit so only Powerlevel10k controls the prompt.
-typeset -U config_files
-config_files=($ZSH/**/*.zsh)
+# Execute initialization only from the known Homebrew installation.
+if [[ -x /opt/homebrew/bin/mise ]]; then
+  eval "$(/opt/homebrew/bin/mise activate zsh)"
+fi
 
-# load the path files
-for file in ${(M)config_files:#*/path.zsh}
-do
-  source $file
-done
-
-# load everything but path/completion/custom prompt/p10k config
-for file in ${${${config_files:#*/path.zsh}:#*/completion.zsh}:#*/prompt.zsh}
-do
-  [[ $file == */powerlevel10k/p10k.zsh ]] && continue
-  source $file
-done
-
-# prompt: use Powerlevel10k only
-source $ZSH/powerlevel10k/p10k.zsh
-
-# initialize autocomplete here, otherwise functions won't be loaded
-autoload -U compinit
-compinit
-
-# load every completion after autocomplete loads
-for file in ${(M)config_files:#*/completion.zsh}
-do
-  source $file
-done
-
-unset config_files
-
-# Better history
-# Credits to https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search # Up
-bindkey "^[[B" down-line-or-beginning-search # Down
-
-[[ "$TERM_PROGRAM" == "kiro" ]] && (( $+commands[kiro] )) && . "$(kiro --locate-shell-integration-path zsh)"
-
-eval "$(mise activate zsh)"
-
-# Remove duplicate entries inherited or added by shell integrations.
-path=($path)
-fpath=($fpath)
+# Lets ssh-add use the same agent as the SSH config template.
+export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"

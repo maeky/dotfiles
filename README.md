@@ -1,116 +1,90 @@
 # Max's dotfiles
 
-Personal macOS and Zsh configuration, originally forked from
+Reviewed macOS/Zsh setup for a clean Apple Silicon Mac. Originally forked from
 [holman/dotfiles](https://github.com/holman/dotfiles).
 
-## What is included
+## Before activation
 
-- Topic-based Zsh configuration
-- Powerlevel10k prompt
-- Homebrew paths and setup helpers
-- `mise`, `pyenv`, and `rbenv` shell integration
-- Git aliases and global configuration
-- Zed CLI wrappers
-- macOS defaults and update scripts
-- Vim, Ruby, Docker, and Xcode helpers
+Revoke credentials exposed on the old Mac, if not already done. Verify the GitHub
+account's SSH keys, tokens and sessions. Do not restore old shell configuration,
+private keys, plugin directories or shell caches wholesale.
 
-## How it works
-
-The repository lives at `~/.dotfiles`. `~/.zshrc` and other home-directory
-configuration files are symlinked to files ending in `.symlink`.
-
-The Zsh loader automatically sources topic files in this order:
-
-1. Every `path.zsh`
-2. Other `*.zsh` files
-3. Powerlevel10k
-4. Every `completion.zsh`
-
-Executables in `bin/` are added to `PATH` and can be run directly.
-
-## Requirements
-
-The current configuration expects:
-
-- macOS with Zsh
-- [Homebrew](https://brew.sh/)
-- `mise`, `powerlevel10k`, `pyenv`, and `rbenv`
-- [Zed](https://zed.dev/) installed in `/Applications`
-
-Install the main Homebrew dependencies with:
+The repository must be at `~/.dotfiles`. Preview the exact links:
 
 ```sh
-brew install mise powerlevel10k pyenv rbenv
+/bin/bash ~/.dotfiles/script/bootstrap --dry-run
 ```
 
-Lando and Kiro integrations are optional and only activate when available.
-
-## Installation
+The default is preview only. After inspecting the preview and resolving conflicts:
 
 ```sh
-git clone git@github.com:maeky/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-script/bootstrap
-exec zsh
+/bin/bash ~/.dotfiles/script/bootstrap --apply
 ```
 
-`script/bootstrap` creates the symlinks and runs the repository's setup tools.
-On macOS, these tools can apply system defaults, update Homebrew, and run
-software updates. Review `script/bootstrap`, `bin/dot`, and `macos/` before
-running them on a new machine.
+This links only `.zshrc`, `.gitconfig`, `.gitignore` and the global mise config.
+Existing files are never deleted or overwritten. Conflicts stop the operation
+before links are created. Resolve conflicts manually, preserving original files.
+The script installs no software, changes no macOS defaults and runs no shell reload.
+Open a new terminal only when ready to activate the configuration.
 
-## Local and private configuration
+This uses a small explicit linker, not GNU Stow. The `.symlink` structure is not
+a Stow package layout; do not run Stow directly against these topic directories.
 
-Machine-specific environment variables and secrets belong in `~/.localrc`,
-not in this repository:
+## Software installation is separate
+
+Use a fresh native Homebrew installation at `/opt/homebrew`, following
+[Homebrew's official instructions](https://docs.brew.sh/Installation).
+Review `Brewfile`, then explicitly run:
 
 ```sh
-export EXAMPLE_TOKEN="..."
+/opt/homebrew/bin/brew bundle --file="$HOME/.dotfiles/Brewfile"
 ```
 
-Protect the file and reload Zsh:
+The initial list is limited to gh, mise and Powerlevel10k. Add apps individually
+after deciding what is needed. No third-party taps are configured. `script/install`
+only prints instructions. `bin/dot` only invokes the linker (preview by default).
 
-```sh
-chmod 600 ~/.localrc
-exec zsh
-```
+## Shell startup
 
-User-specific Git identity is stored in `git/gitconfig.local.symlink`, which is
-ignored by Git and linked as `~/.gitconfig.local`.
+Zsh sources an explicit list. It does not load `.localrc`, Kiro, grc, pyenv or
+rbenv integration. PATH starts with native Homebrew and macOS system paths;
+only the reviewed `bin/` directory is appended. Custom tool paths must be added
+deliberately. Powerlevel10k and mise are initialized only if available at their
+known Homebrew locations. Keep completion security checks enabled.
 
-## Zed commands
+Mise is the default runtime manager. Its global config enables paranoid mode.
+`mise/config.toml` pins Node.js 24.21.0 and Python 3.14.8. Ruby is not configured. Review
+project hooks, tasks, plugins and environment directives before `mise trust`.
+Do not broadly trust project directories. Trust is not a sandbox.
 
-Open a project in Zed:
+## Private identity and SSH
 
-```sh
-zed .
-```
+Create `~/.gitconfig.local` from `git/gitconfig.local.symlink.example` and fill in
+your name and email. The file belongs outside this repository. GitHub HTTPS uses
+the freshly authenticated Homebrew gh credential helper; SSH uses the SSH agent.
 
-`zed-wait` waits until the opened file or project is closed. It is used by
-`EDITOR` and `VISUAL` for commands that require a blocking editor.
+`ssh/config.example` is a template and is not installed automatically. Merge it
+manually into a reviewed `~/.ssh/config` after exporting only the PUBLIC part of
+a new GitHub SSH key from 1Password to `~/.ssh/github.pub`. Private keys stay in
+1Password. Review any existing Include, Match exec, ProxyCommand, LocalCommand,
+IdentityAgent and ForwardAgent directives before use. Preserve host-key checking
+and independently verify host fingerprints when prompted.
 
-## Adding configuration
+Zsh sets SSH_AUTH_SOCK to the 1Password macOS socket so ssh-add uses that agent.
+SSH itself selects the agent through IdentityAgent in the SSH config template.
+Do not reuse any private key exposed on the infected Mac.
 
-- Add `topic/name.zsh` for automatically loaded shell configuration.
-- Name it `topic/path.zsh` when it must load before other topic files.
-- Name it `topic/completion.zsh` for completion setup.
-- Add `topic/name.symlink` to create `~/.name` through `script/bootstrap`.
-- Add executable utility commands to `bin/`.
+Do not store passwords or tokens in the repository or export them globally at
+shell startup. Supply secrets only to commands that need them. Shell history
+can contain sensitive arguments; ignoring leading spaces is not a guarantee.
 
-## Maintenance
+## Editors and legacy helpers
 
-Reload the current shell after changing the configuration:
+The active `bin/` contains only `dot`, `e`, `zed` and `zed-wait`. Editor commands
+expect a trusted Zed installation in `/Applications/Zed.app`.
 
-```sh
-exec zsh
-```
-
-Inspect changes before committing:
-
-```sh
-git status
-git diff
-```
-
-The `dot` command runs macOS defaults, Homebrew updates, and repository
-installers. Review its actions before running it.
+Old scripts are in `legacy/` for reference and are not sourced, linked or placed
+on PATH. They include external upload utilities, potentially unsafe shell
+interpolation and system modification scripts. Repair individual helpers before
+reintroducing them. Remaining Docker/Xcode aliases and completion reference files
+are not loaded automatically.
